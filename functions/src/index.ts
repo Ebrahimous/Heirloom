@@ -1,0 +1,73 @@
+import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { defineSecret } from 'firebase-functions/params';
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropicKey = defineSecret('ANTHROPIC_API_KEY');
+
+const MODEL = 'claude-sonnet-4-6';
+const MAX_TOKENS = 400;
+
+type CallType = 'narration' | 'transition' | 'legacy';
+type Lang = 'ar' | 'en';
+
+interface ClaudeRequest {
+  type: CallType;
+  systemPrompt: string;
+  userMessage: string;
+  language: Lang;
+}
+
+interface ClaudeResponse {
+  text: string;
+}
+
+const ARABIC_SUFFIX = `
+
+IMPORTANT: Write your response entirely in Arabic. Use literary Modern Standard Arabic (الفصحى). Maintain the same restrained, specific literary style — simply in Arabic.`;
+
+export const callClaude = onCall<ClaudeRequest, Promise<ClaudeResponse>>(
+  {
+    secrets: [anthropicKey],
+    enforceAppCheck: false,
+    cors: true,
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError('unauthenticated', 'You must be signed in to play.');
+    }
+
+    const { type, systemPrompt, userMessage, language } = request.data;
+
+    if (!type || !systemPrompt || !userMessage) {
+      throw new HttpsError('invalid-argument', 'Missing required fields.');
+    }
+
+    const validTypes: CallType[] = ['narration', 'transition', 'legacy'];
+    if (!validTypes.includes(type)) {
+      throw new HttpsError('invalid-argument', 'Invalid call type.');
+    }
+
+    const finalSystemPrompt = language === 'ar'
+      ? systemPrompt + ARABIC_SUFFIX
+      : systemPrompt;
+
+    const client = new Anthropic({ apiKey: anthropicKey.value() });
+
+    try {
+      const message = await client.messages.create({
+        model: MODEL,
+        max_tokens: MAX_TOKENS,
+        system: finalSystemPrompt,
+        messages: [{ role: 'user', content: userMessage }],
+      });
+
+      const text = message.content[0]?.type === 'text' ? message.content[0].text.trim() : '';
+      if (!text) throw new Error('Empty response from Claude');
+
+      return { text };
+    } catch (err) {
+      console.error('Claude API error:', err);
+      throw new HttpsError('internal', 'Narration generation failed.');
+    }
+  }
+);
