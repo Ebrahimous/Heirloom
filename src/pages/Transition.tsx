@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { loadGame, advanceGeneration } from '../lib/gameState';
-import { summariseLedger } from '../lib/ledgerEngine';
+import { summariseLedger, getInheritanceProse } from '../lib/ledgerEngine';
 import { generateTransition } from '../lib/claudeApi';
 import type { GameState } from '../constants/ledgerTypes';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -64,6 +64,7 @@ export default function Transition() {
   const gen = game.currentGeneration;
   const deceasedName = gen === 1 ? game.characterNames.gen1 : game.characterNames.gen2;
   const nextName = gen === 1 ? game.characterNames.gen2 : game.characterNames.gen3 || '—';
+  const inheritanceProse = getInheritanceProse(game.ledger, game.familyName, lang);
 
   return (
     <div className="page transition-page">
@@ -78,7 +79,7 @@ export default function Transition() {
 
       <div className="transition-inheritance">
         <div className="inheritance-label">{t('whatPasses')}</div>
-        <p className="inheritance-prose">{summariseLedger(game.ledger, game.familyName)}</p>
+        <p className="inheritance-prose">{inheritanceProse}</p>
       </div>
 
       {nextName && nextName !== '—' && (

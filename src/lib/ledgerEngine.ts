@@ -40,6 +40,7 @@ function describeLevel(value: number, low: string, mid: string, high: string): s
   return low;
 }
 
+// Always English — used as AI context (AI translates via system prompt)
 export function summariseLedger(ledger: FamilyLedger, familyName: string): string {
   const parts: string[] = [];
 
@@ -55,11 +56,9 @@ export function summariseLedger(ledger: FamilyLedger, familyName: string): strin
   parts.push(`${tribal} ${social}`);
 
   if (ledger.education.level >= 60) {
-    parts.push(
-      ledger.education.foreign
-        ? 'The family has invested heavily in education, including study abroad.'
-        : 'The family has invested heavily in education within Kuwait.'
-    );
+    parts.push(ledger.education.foreign
+      ? 'The family has invested heavily in education, including study abroad.'
+      : 'The family has invested heavily in education within Kuwait.');
   } else if (ledger.education.level >= 30) {
     parts.push('The family has some education behind them, though not exceptional.');
   } else {
@@ -83,11 +82,9 @@ export function summariseLedger(ledger: FamilyLedger, familyName: string): strin
   return parts.join(' ');
 }
 
+// UI-facing prose — respects language
 export function getLedgerProse(ledger: FamilyLedger, lang: Lang = 'en'): string {
-  if (lang === 'ar') {
-    return getLedgerProseAr(ledger);
-  }
-  return getLedgerProseEn(ledger);
+  return lang === 'ar' ? getLedgerProseAr(ledger) : getLedgerProseEn(ledger);
 }
 
 function getLedgerProseEn(ledger: FamilyLedger): string {
@@ -136,4 +133,51 @@ function getLedgerProseAr(ledger: FamilyLedger): string {
   else if (ledger.trauma < 20) lines.push('أبعد الله عن العائلة أقسى ما كان يمكن أن تمنحه هذه الحقبة.');
 
   return lines.join(' ');
+}
+
+// UI-facing inheritance prose — respects language
+export function getInheritanceProse(ledger: FamilyLedger, familyName: string, lang: Lang = 'en'): string {
+  return lang === 'ar' ? getInheritanceProseAr(ledger, familyName) : getInheritanceProseEn(ledger, familyName);
+}
+
+function getInheritanceProseEn(ledger: FamilyLedger, familyName: string): string {
+  const parts: string[] = [];
+
+  const totalWealth = (ledger.wealth.liquid + ledger.wealth.land + ledger.wealth.business) / 3;
+  if (totalWealth >= 60) parts.push(`The ${familyName} family passes on real prosperity.`);
+  else if (totalWealth >= 35) parts.push(`The ${familyName} family passes on modest but solid means.`);
+  else parts.push(`The ${familyName} family passes on little material wealth.`);
+
+  const rep = (ledger.reputation.tribal + ledger.reputation.social) / 2;
+  if (rep >= 65) parts.push('A name with weight in the community.');
+  else if (rep >= 35) parts.push('A respected, if quiet, name.');
+  else parts.push('A name that has suffered.');
+
+  if (ledger.rootedness >= 65) parts.push('Deep roots in the land and community.');
+  else if (ledger.rootedness < 35) parts.push('A family somewhat adrift from its origins.');
+
+  if (ledger.trauma >= 60) parts.push('And an unhealed wound that travels forward.');
+
+  return parts.join(' ');
+}
+
+function getInheritanceProseAr(ledger: FamilyLedger, familyName: string): string {
+  const parts: string[] = [];
+
+  const totalWealth = (ledger.wealth.liquid + ledger.wealth.land + ledger.wealth.business) / 3;
+  if (totalWealth >= 60) parts.push(`تورث عائلة ${familyName} رخاءً حقيقيًا.`);
+  else if (totalWealth >= 35) parts.push(`تورث عائلة ${familyName} إمكانات متواضعة لكن صلبة.`);
+  else parts.push(`تورث عائلة ${familyName} قليلًا من الثروة المادية.`);
+
+  const rep = (ledger.reputation.tribal + ledger.reputation.social) / 2;
+  if (rep >= 65) parts.push('اسم له ثقل في المجتمع.');
+  else if (rep >= 35) parts.push('اسم محترم وإن كان هادئًا.');
+  else parts.push('اسم طاله الضرر.');
+
+  if (ledger.rootedness >= 65) parts.push('جذور عميقة في الأرض والمجتمع.');
+  else if (ledger.rootedness < 35) parts.push('عائلة انفصلت بعض الشيء عن أصولها.');
+
+  if (ledger.trauma >= 60) parts.push('وجرح لم يُشفَ يمضي إلى الأمام.');
+
+  return parts.join(' ');
 }
