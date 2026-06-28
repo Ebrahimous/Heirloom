@@ -3,8 +3,8 @@ export type Lang = 'ar' | 'en';
 export const strings = {
   ar: {
     // App
-    appNameAr: 'الورث',
-    appNameEn: 'الورث',
+    appNameAr: 'الموروث',
+    appNameEn: 'الموروث',
     tagline: 'أربعة أجيال. عائلة واحدة. كل اختيار يرث ما قبله.',
     footerEra: 'الكويت، ١٩٥٨ — الحاضر',
 
@@ -75,7 +75,7 @@ export const strings = {
   },
 
   en: {
-    appNameAr: 'الورث',
+    appNameAr: 'الموروث',
     appNameEn: 'Heirloom',
     tagline: 'Four generations. One family. Every choice inherits the last.',
     footerEra: 'Kuwait, 1958 — Present',
