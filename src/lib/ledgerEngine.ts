@@ -1,4 +1,5 @@
 import type { FamilyLedger, LedgerEffect } from '../constants/ledgerTypes';
+import type { Lang } from '../i18n/strings';
 
 function clamp(value: number): number {
   return Math.min(100, Math.max(0, value));
@@ -42,7 +43,6 @@ function describeLevel(value: number, low: string, mid: string, high: string): s
 export function summariseLedger(ledger: FamilyLedger, familyName: string): string {
   const parts: string[] = [];
 
-  // Wealth
   const liquid = describeLevel(ledger.wealth.liquid, 'cash-poor', 'comfortable in liquid assets', 'wealthy in liquid assets');
   const land = describeLevel(ledger.wealth.land, 'with little land to their name', 'holding modest land', 'with significant land holdings');
   const business = describeLevel(ledger.wealth.business, 'without established business', 'with some business activity', 'with a strong business presence');
@@ -50,12 +50,10 @@ export function summariseLedger(ledger: FamilyLedger, familyName: string): strin
 
   parts.push(`The ${familyName} family is ${liquid}, ${land}, and ${business}, ${debt}.`);
 
-  // Reputation
   const tribal = describeLevel(ledger.reputation.tribal, 'Their standing within the tribe is uncertain.', 'They are known and respected within the tribe.', 'They are a prominent name in the tribal community.');
   const social = describeLevel(ledger.reputation.social, 'Their broader social reputation is modest.', 'They are well regarded in society.', 'They carry considerable social influence.');
   parts.push(`${tribal} ${social}`);
 
-  // Education
   if (ledger.education.level >= 60) {
     parts.push(
       ledger.education.foreign
@@ -68,7 +66,6 @@ export function summariseLedger(ledger: FamilyLedger, familyName: string): strin
     parts.push('The family has had little formal education.');
   }
 
-  // Rootedness
   const rootedness = describeLevel(
     ledger.rootedness,
     'They have become somewhat displaced from their origins.',
@@ -77,7 +74,6 @@ export function summariseLedger(ledger: FamilyLedger, familyName: string): strin
   );
   parts.push(rootedness);
 
-  // Trauma
   if (ledger.trauma >= 60) {
     parts.push('There is a heavy thread of unresolved loss running through the family\'s recent history.');
   } else if (ledger.trauma >= 35) {
@@ -87,10 +83,16 @@ export function summariseLedger(ledger: FamilyLedger, familyName: string): strin
   return parts.join(' ');
 }
 
-export function getLedgerProse(ledger: FamilyLedger): string {
+export function getLedgerProse(ledger: FamilyLedger, lang: Lang = 'en'): string {
+  if (lang === 'ar') {
+    return getLedgerProseAr(ledger);
+  }
+  return getLedgerProseEn(ledger);
+}
+
+function getLedgerProseEn(ledger: FamilyLedger): string {
   const lines: string[] = [];
 
-  // Wealth narrative
   const totalWealth = (ledger.wealth.liquid + ledger.wealth.land + ledger.wealth.business) / 3;
   if (totalWealth >= 60) lines.push('Prosperity — the family has built something real.');
   else if (totalWealth >= 35) lines.push('Modest means — enough to stand on.');
@@ -98,18 +100,40 @@ export function getLedgerProse(ledger: FamilyLedger): string {
 
   if (ledger.wealth.debt > 50) lines.push('Significant debts weigh on what was built.');
 
-  // Reputation
   const rep = (ledger.reputation.tribal + ledger.reputation.social) / 2;
   if (rep >= 65) lines.push('The name carries weight in the community.');
   else if (rep >= 35) lines.push('A respected, if unremarkable, family name.');
   else lines.push('The family\'s reputation has suffered.');
 
-  // Rootedness vs trauma
   if (ledger.rootedness >= 65) lines.push('Deep roots. The family knows where it comes from.');
   else if (ledger.rootedness < 35) lines.push('Something has loosened the family from its ground.');
 
   if (ledger.trauma >= 60) lines.push('Much has been survived. Not all of it has been healed.');
   else if (ledger.trauma < 20) lines.push('The family has been spared the worst of what this era could give.');
+
+  return lines.join(' ');
+}
+
+function getLedgerProseAr(ledger: FamilyLedger): string {
+  const lines: string[] = [];
+
+  const totalWealth = (ledger.wealth.liquid + ledger.wealth.land + ledger.wealth.business) / 3;
+  if (totalWealth >= 60) lines.push('الرخاء — بنت العائلة شيئًا حقيقيًا.');
+  else if (totalWealth >= 35) lines.push('حال متوسط — يكفي للوقوف على قدم راسخة.');
+  else lines.push('سنوات عجاف — تعيش العائلة بحذر وتقشّف.');
+
+  if (ledger.wealth.debt > 50) lines.push('ديون ثقيلة تُثقل ما بُني.');
+
+  const rep = (ledger.reputation.tribal + ledger.reputation.social) / 2;
+  if (rep >= 65) lines.push('الاسم يحمل ثقلًا في المجتمع.');
+  else if (rep >= 35) lines.push('اسم عائلة محترم، وإن كان بلا بريق استثنائي.');
+  else lines.push('سمعة العائلة تراجعت.');
+
+  if (ledger.rootedness >= 65) lines.push('جذور عميقة. العائلة تعرف من أين أتت.');
+  else if (ledger.rootedness < 35) lines.push('شيء ما أبعد العائلة عن أرضها الأصلية.');
+
+  if (ledger.trauma >= 60) lines.push('الكثير مما عاشته العائلة لم يُشفَ منه بعد.');
+  else if (ledger.trauma < 20) lines.push('أبعد الله عن العائلة أقسى ما كان يمكن أن تمنحه هذه الحقبة.');
 
   return lines.join(' ');
 }

@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local secrets — never commit
+secret.txt
+.env
+
+# Compiled function output — built by CI
+functions/lib/

@@ -4,7 +4,7 @@ export const strings = {
   ar: {
     // App
     appNameAr: 'الورث',
-    appNameEn: 'Heirloom',
+    appNameEn: 'الورث',
     tagline: 'أربعة أجيال. عائلة واحدة. كل اختيار يرث ما قبله.',
     footerEra: 'الكويت، ١٩٥٨ — الحاضر',
 
@@ -12,14 +12,14 @@ export const strings = {
     signInGoogle: 'تسجيل الدخول بـ Google',
     playAsGuest: 'العب كضيف',
     signingIn: '...جارٍ التسجيل',
-    continueStory: 'أكمل قصة آل',
+    continueStory: 'أكمل قصة عائلة',
     beginNewFamily: 'ابدأ عائلة جديدة',
 
     // New Game
     newFamilyTitle: 'عائلة جديدة',
     newFamilySub: 'تبدأ القصة في الكويت عام ١٩٥٨.',
     familyNameLabel: 'اسم العائلة',
-    familyNamePlaceholder: 'مثال: الحاجري',
+    familyNamePlaceholder: 'مثال: الهاجري',
     gen1NameLabel: 'اسم الجدّ',
     gen1NamePlaceholder: 'مثال: حسن',
     gen2NameLabel: 'اسم الابن (الجيل الثاني)',

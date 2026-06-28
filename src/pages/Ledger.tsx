@@ -9,7 +9,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 export default function Ledger() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const gameId = (location.state as { gameId?: string })?.gameId;
 
   const [game, setGame] = useState<GameState | null>(null);
@@ -28,7 +28,7 @@ export default function Ledger() {
     return <div className="screen-center"><div className="loading-dots"><span /><span /><span /></div></div>;
   }
 
-  const prose = getLedgerProse(game.ledger);
+  const prose = getLedgerProse(game.ledger, lang);
 
   return (
     <div className="page ledger-page">

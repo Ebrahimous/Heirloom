@@ -120,6 +120,41 @@ body {
   right: 4px;
 }
 
+/* RTL text alignment — right-align all content */
+[dir="rtl"] .decision-card {
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .archetype-card {
+  text-align: right;
+}
+
+[dir="rtl"] .situation-text p,
+[dir="rtl"] .narration-block p,
+[dir="rtl"] .ledger-prose p,
+[dir="rtl"] .transition-narration p,
+[dir="rtl"] .legacy-text p,
+[dir="rtl"] .inheritance-prose,
+[dir="rtl"] .page-title,
+[dir="rtl"] .page-sub,
+[dir="rtl"] .form-label,
+[dir="rtl"] .gen-label,
+[dir="rtl"] .gen-era,
+[dir="rtl"] .ledger-label,
+[dir="rtl"] .ledger-family,
+[dir="rtl"] .gate-title,
+[dir="rtl"] .gate-text,
+[dir="rtl"] .gate-note,
+[dir="rtl"] .historical-context p {
+  text-align: right;
+}
+
+[dir="rtl"] .form-input {
+  text-align: right;
+  direction: rtl;
+}
+
 /* Arabic font stack — better rendering for Arabic text */
 [dir="rtl"] body,
 [dir="rtl"] .situation-text p,
@@ -223,6 +258,8 @@ body {
   flex-direction: column;
   gap: 12px;
   padding-top: 60px;
+  text-align: center;
+  align-items: center;
 }
 
 .home-logo {
@@ -246,6 +283,7 @@ body {
   line-height: 1.6;
   max-width: 320px;
   margin-top: 4px;
+  text-align: center;
 }
 
 .home-actions {

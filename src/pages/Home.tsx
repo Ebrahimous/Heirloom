@@ -60,7 +60,7 @@ export default function Home() {
     <div className="page home-page">
       <div className="home-hero">
         <div className="home-logo">{t('appNameAr')}</div>
-        <h1 className="home-title">{t('appNameEn')}</h1>
+        <h1 className="home-title">{isAr ? 'الورث' : 'Heirloom'}</h1>
         <p className="home-tagline">{t('tagline')}</p>
       </div>
 
