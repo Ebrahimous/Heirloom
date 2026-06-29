@@ -70,6 +70,7 @@ export default function Chapter() {
 
   return (
     <div className="page chapter-page">
+      <button className="back-btn" onClick={() => navigate("/")}>{t("back")}</button>
       <GenerationHeader
         era={era}
         generation={gen}

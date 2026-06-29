@@ -32,6 +32,7 @@ export default function Ledger() {
 
   return (
     <div className="page ledger-page">
+      <button className="back-btn" onClick={() => navigate("/")}>{t("back")}</button>
       <div className="ledger-header">
         <div className="ledger-label">{t('endOfGen')} {game.currentGeneration}</div>
         <h2 className="ledger-family">{game.familyName}</h2>

@@ -130,6 +130,9 @@ export default function Decision() {
 
   return (
     <div className="page decision-page">
+      {!selectedOption && (
+        <button className="back-btn" onClick={() => navigate("/chapter", { state: { gameId } })}>{t("back")}</button>
+      )}
       <GenerationHeader
         era={era}
         generation={game.currentGeneration}

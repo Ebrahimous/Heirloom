@@ -68,6 +68,7 @@ export default function Transition() {
 
   return (
     <div className="page transition-page">
+      <button className="back-btn" onClick={() => navigate("/")}>{t("back")}</button>
       <div className="transition-death">
         <div className="death-label">{t('generationPasses')}</div>
         <div className="death-name">{deceasedName}</div>
