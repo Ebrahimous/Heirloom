@@ -19,7 +19,7 @@ const GEN_DECISIONS: DecisionPoint[][] = [GEN1_DECISIONS, GEN2_DECISIONS];
 export default function Decision() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAr, lang, t } = useLanguage();
+  const { isAr, t } = useLanguage();
   const { gameId, decisionId } = (location.state ?? {}) as { gameId?: string; decisionId?: string };
 
   const [game, setGame] = useState<GameState | null>(null);
@@ -85,7 +85,6 @@ export default function Decision() {
         familyName: game.familyName,
         characterName,
         decisionHistory: historyForAI,
-        language: lang,
       });
       setNarration(text);
     } catch {
@@ -112,7 +111,7 @@ export default function Decision() {
     const record = { decisionId: decision.id, optionId: option.id, narration: fallback };
     const finalGame = await recordDecision(updatedGame, record).catch(() => updatedGame);
     setGame(finalGame);
-  }, [game, decision, selectedOption, isAr, lang]);
+  }, [game, decision, selectedOption, isAr]);
 
   function handleContinue() {
     if (!game || !decision) return;
@@ -171,11 +170,4 @@ export default function Decision() {
         </div>
       )}
 
-      {canContinue && !narrationLoading && (
-        <button className="btn-primary continue-btn" onClick={handleContinue}>
-          {isAr ? 'متابعة' : 'Continue'}
-        </button>
-      )}
-    </div>
-  );
-}
+      {canContinue && !narrationLoading 

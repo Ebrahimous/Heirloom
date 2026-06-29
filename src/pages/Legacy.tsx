@@ -48,7 +48,6 @@ export default function Legacy() {
           ledgerSummary: summariseLedger(g.ledger, g.familyName),
           narrativeFlags: g.narrativeFlags,
           decisionHistory: historyForAI,
-          language: lang,
         });
         setLegacy(text);
       } catch {
@@ -83,7 +82,4 @@ export default function Legacy() {
       <div className="legacy-text"><p>{legacy}</p></div>
       <div className="legacy-verdict"><p>{summariseLedger(game.ledger, game.familyName)}</p></div>
 
-      <button className="btn-secondary" onClick={() => navigate('/')}>{t('playAgain')}</button>
-    </div>
-  );
-}
+      <button className="btn-

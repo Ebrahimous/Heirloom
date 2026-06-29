@@ -8,22 +8,16 @@ const MODEL = 'claude-sonnet-4-6';
 const MAX_TOKENS = 400;
 
 type CallType = 'narration' | 'transition' | 'legacy';
-type Lang = 'ar' | 'en';
 
 interface ClaudeRequest {
   type: CallType;
   systemPrompt: string;
   userMessage: string;
-  language: Lang;
 }
 
 interface ClaudeResponse {
   text: string;
 }
-
-const ARABIC_SUFFIX = `
-
-IMPORTANT: Write your response entirely in Arabic. Use literary Modern Standard Arabic (الفصحى). Maintain the same restrained, specific literary style — simply in Arabic.`;
 
 export const callClaude = onCall<ClaudeRequest, Promise<ClaudeResponse>>(
   {
@@ -36,7 +30,7 @@ export const callClaude = onCall<ClaudeRequest, Promise<ClaudeResponse>>(
       throw new HttpsError('unauthenticated', 'You must be signed in to play.');
     }
 
-    const { type, systemPrompt, userMessage, language } = request.data;
+    const { type, systemPrompt, userMessage } = request.data;
 
     if (!type || !systemPrompt || !userMessage) {
       throw new HttpsError('invalid-argument', 'Missing required fields.');
@@ -47,17 +41,13 @@ export const callClaude = onCall<ClaudeRequest, Promise<ClaudeResponse>>(
       throw new HttpsError('invalid-argument', 'Invalid call type.');
     }
 
-    const finalSystemPrompt = language === 'ar'
-      ? systemPrompt + ARABIC_SUFFIX
-      : systemPrompt;
-
     const client = new Anthropic({ apiKey: anthropicKey.value() });
 
     try {
       const message = await client.messages.create({
         model: MODEL,
         max_tokens: MAX_TOKENS,
-        system: finalSystemPrompt,
+        system: systemPrompt,
         messages: [{ role: 'user', content: userMessage }],
       });
 

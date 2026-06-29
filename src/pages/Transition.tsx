@@ -34,7 +34,6 @@ export default function Transition() {
           deceasedName,
           generation: gen,
           ledgerSummary: summariseLedger(g.ledger, g.familyName),
-          language: lang,
         });
         setNarration(text);
       } catch {
@@ -92,9 +91,4 @@ export default function Transition() {
 
       <button className="btn-primary" onClick={handleAdvance} disabled={advancing}>
         {advancing
-          ? (isAr ? '...جارٍ البدء' : 'Beginning…')
-          : `${t('beginChapter')} ${nextName}`}
-      </button>
-    </div>
-  );
-}
+          ? (isAr ? '...جارٍ البدء' : 'Beg
