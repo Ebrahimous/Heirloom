@@ -30,7 +30,11 @@ A mobile-first narrative strategy game set in Kuwait, 1958–present. The player
 - All 7 pages: Home, NewGame, Chapter, Decision, Ledger, Transition, Legacy
 - All 5 components: DecisionCard, NarrationBlock, GenerationHeader, FamilyTree, PremiumGate
 - GitHub Actions CI/CD: push to `main` → auto build + deploy to Firebase
-
+- Situation variants: each `DecisionPoint` has `situationVariants` / `situationVariantsAr` — 2 extra framings picked deterministically by hash of `gameId + decisionId`. Same run = same variant; new family = different framing (implemented in `Chapter.tsx`)
+- Ledger variance: each `DecisionOption` has `variance?: number` (±%). `applyVariance()` in `ledgerEngine.ts` randomises numeric effects per run (8–25%). Applied in `Decision.tsx` before `applyEffect`
+- Bonus events: `src/data/bonusEvents.ts` — 11 events across gen 1 and gen 2. After each decision, 40% chance one fires. Shown as "Meanwhile / في غضون ذلك" card in `Decision.tsx`. Won't repeat within a session (tracked in component state). Ledger effect applied and saved to Firestore
+- `applyVariance()` exported from `ledgerEngine.ts`
+- `BonusEvent` interface in `ledgerTypes.ts`
 
 ### What's not done yet
 - Gen 3 and Gen 4 decisions need full authoring (placeholder stubs exist)
