@@ -1,10 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { loadGame, recordDecision, saveGame } from '../lib/gameState';
-import { applyEffect, summariseLedger } from '../lib/ledgerEngine';
+import { applyEffect, applyVariance, summariseLedger } from '../lib/ledgerEngine';
 import { filterOptions } from '../lib/decisionGating';
 import { generateNarration } from '../lib/claudeApi';
-import type { GameState, DecisionPoint, DecisionOption } from '../constants/ledgerTypes';
+import { pickBonusEvent } from '../data/bonusEvents';
+import type { BonusEvent, GameState, DecisionPoint, DecisionOption } from '../constants/ledgerTypes';
 import { GEN1_DECISIONS } from '../data/gen1Decisions';
 import { GEN2_DECISIONS } from '../data/gen2Decisions';
 import GenerationHeader from '../components/GenerationHeader';
@@ -28,6 +29,8 @@ export default function Decision() {
   const [narrationLoading, setNarrationLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [canContinue, setCanContinue] = useState(false);
+  const [bonusEvent, setBonusEvent] = useState<BonusEvent | null>(null);
+  const [firedEvents, setFiredEvents] = useState<string[]>([]);
 
   useEffect(() => {
     if (!gameId || !decisionId) { navigate('/'); return; }
@@ -51,7 +54,8 @@ export default function Decision() {
     setNarration(fallback);
     setNarrationLoading(true);
 
-    const newLedger = applyEffect(game.ledger, option.ledgerEffect);
+    const variedEffect = option.variance ? applyVariance(option.ledgerEffect, option.variance) : option.ledgerEffect;
+    const newLedger = applyEffect(game.ledger, variedEffect);
     const newFlags = [...game.narrativeFlags, ...(option.narrativeFlags ?? [])];
     const updatedGame: GameState = { ...game, ledger: newLedger, narrativeFlags: newFlags };
 
@@ -71,6 +75,9 @@ export default function Decision() {
       ? game.characterNames.gen1
       : game.characterNames.gen2;
 
+    let finalLedger = newLedger;
+    let finalGame = updatedGame;
+
     try {
       const text = await generateNarration({
         situation: isAr ? (decision.situationAr ?? decision.situation) : decision.situation,
@@ -87,13 +94,27 @@ export default function Decision() {
       // fallback already set
     } finally {
       setNarrationLoading(false);
+
+      // 40% chance of a bonus event after each decision
+      if (Math.random() < 0.4) {
+        const event = pickBonusEvent(game.currentGeneration, firedEvents);
+        if (event) {
+          setBonusEvent(event);
+          setFiredEvents((prev) => [...prev, event.id]);
+          finalLedger = applyEffect(newLedger, event.ledgerEffect);
+          finalGame = { ...updatedGame, ledger: finalLedger };
+          await saveGame(finalGame).catch(console.error);
+          setGame(finalGame);
+        }
+      }
+
       setCanContinue(true);
     }
 
     const record = { decisionId: decision.id, optionId: option.id, narration: fallback };
-    const finalGame = await recordDecision(updatedGame, record).catch(() => updatedGame);
-    setGame(finalGame);
-  }, [game, decision, selectedOption, isAr, lang]);
+    const saved = await recordDecision(finalGame, record).catch(() => finalGame);
+    setGame(saved);
+  }, [game, decision, selectedOption, isAr, lang, firedEvents]);
 
   function handleContinue() {
     if (!game || !decision) return;
@@ -137,6 +158,15 @@ export default function Decision() {
       {(narration || narrationLoading) && (
         <div className="narration-section">
           <NarrationBlock text={narration} loading={narrationLoading} />
+        </div>
+      )}
+
+      {canContinue && bonusEvent && (
+        <div className="bonus-event-card">
+          <p className="bonus-event-label">{isAr ? 'في غضون ذلك' : 'Meanwhile'}</p>
+          <p className="bonus-event-text">
+            {isAr ? bonusEvent.textAr : bonusEvent.text}
+          </p>
         </div>
       )}
 

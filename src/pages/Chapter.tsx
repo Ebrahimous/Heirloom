@@ -50,8 +50,20 @@ export default function Chapter() {
     return null;
   }
 
+  // Pick a situation variant deterministically — same variant for the same game+decision,
+  // different across playthroughs (gameId changes each new game).
+  function pickVariant(base: string, variants?: string[], seed?: string): string {
+    if (!variants || variants.length === 0) return base;
+    const all = [base, ...variants];
+    const hash = (seed ?? '').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return all[hash % all.length];
+  }
+
+  const variantSeed = (gameId ?? '') + currentDecision.id;
   const era = isAr ? (currentDecision.eraAr ?? currentDecision.era) : currentDecision.era;
-  const situation = isAr ? (currentDecision.situationAr ?? currentDecision.situation) : currentDecision.situation;
+  const situation = isAr
+    ? pickVariant(currentDecision.situationAr ?? currentDecision.situation, currentDecision.situationVariantsAr, variantSeed)
+    : pickVariant(currentDecision.situation, currentDecision.situationVariants, variantSeed);
   const historicalContext = isAr
     ? (currentDecision.historicalContextAr ?? currentDecision.historicalContext)
     : currentDecision.historicalContext;

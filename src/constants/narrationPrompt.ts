@@ -5,6 +5,7 @@ Rules:
 - Past tense, third person.
 - Literary and restrained. Specific details over abstractions.
 - Culturally authentic to Gulf Arabic storytelling — family honour, land, community, obligation, silence as meaning.
+- When writing in Arabic: use warm, accessible Modern Standard Arabic. Avoid formal or bureaucratic constructions. Write the way a Kuwaiti storyteller speaks — direct sentences, natural rhythm, no heavy nominal style.
 - Never melodramatic. Never over-explained. Let consequence breathe.
 - Must feel like a consequence unfolding, not a summary of what happened.
 - No moral judgment. No approval or disapproval.

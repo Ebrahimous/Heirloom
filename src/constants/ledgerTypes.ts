@@ -49,6 +49,7 @@ export interface DecisionOption {
   shortNarration: string;
   shortNarrationAr?: string;
   ledgerEffect: LedgerEffect;
+  variance?: number; // ±% randomness applied to numeric ledger effects (e.g. 15 = ±15%)
   requires?: LedgerRequirement;
   narrativeFlags?: string[];
 }
@@ -59,9 +60,19 @@ export interface DecisionPoint {
   eraAr?: string;
   situation: string;
   situationAr?: string;
+  situationVariants?: string[];   // extra EN framings — same decision, different setup text
+  situationVariantsAr?: string[]; // extra AR framings
   historicalContext?: string;
   historicalContextAr?: string;
   options: DecisionOption[];
+}
+
+export interface BonusEvent {
+  id: string;
+  generation?: number; // which gen this fits — omit for any gen
+  text: string;
+  textAr: string;
+  ledgerEffect: LedgerEffect;
 }
 
 export interface CharacterNames {

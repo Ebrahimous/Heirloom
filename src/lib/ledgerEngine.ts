@@ -34,6 +34,22 @@ export function applyEffect(ledger: FamilyLedger, effect: LedgerEffect): FamilyL
   return next;
 }
 
+// Apply ±variance% randomness to numeric ledger effects for replayability.
+// variance: 0–100 representing max % deviation (e.g. 15 = ±15%)
+export function applyVariance(effect: LedgerEffect, variance: number): LedgerEffect {
+  if (!variance) return effect;
+  const result: LedgerEffect = { ...effect };
+  const keys = Object.keys(result) as (keyof LedgerEffect)[];
+  for (const key of keys) {
+    const val = result[key];
+    if (typeof val === 'number' && val !== 0) {
+      const factor = 1 + (Math.random() * 2 - 1) * (variance / 100);
+      (result as Record<string, unknown>)[key] = Math.round(val * factor);
+    }
+  }
+  return result;
+}
+
 function describeLevel(value: number, low: string, mid: string, high: string): string {
   if (value >= 65) return high;
   if (value >= 35) return mid;
@@ -115,22 +131,22 @@ function getLedgerProseAr(ledger: FamilyLedger): string {
   const lines: string[] = [];
 
   const totalWealth = (ledger.wealth.liquid + ledger.wealth.land + ledger.wealth.business) / 3;
-  if (totalWealth >= 60) lines.push('الرخاء — بنت العائلة شيئًا حقيقيًا.');
-  else if (totalWealth >= 35) lines.push('حال متوسط — يكفي للوقوف على قدم راسخة.');
-  else lines.push('سنوات عجاف — تعيش العائلة بحذر وتقشّف.');
+  if (totalWealth >= 60) lines.push('الرخاء موجود — العائلة بنت شيئًا حقيقيًا.');
+  else if (totalWealth >= 35) lines.push('حال متوسط — يكفي للوقوف على أرض صلبة.');
+  else lines.push('سنوات صعبة — العائلة تعيش بحذر.');
 
   if (ledger.wealth.debt > 50) lines.push('ديون ثقيلة تُثقل ما بُني.');
 
   const rep = (ledger.reputation.tribal + ledger.reputation.social) / 2;
   if (rep >= 65) lines.push('الاسم يحمل ثقلًا في المجتمع.');
-  else if (rep >= 35) lines.push('اسم عائلة محترم، وإن كان بلا بريق استثنائي.');
+  else if (rep >= 35) lines.push('اسم عائلة محترم، وإن كان بلا بريق خاص.');
   else lines.push('سمعة العائلة تراجعت.');
 
   if (ledger.rootedness >= 65) lines.push('جذور عميقة. العائلة تعرف من أين أتت.');
   else if (ledger.rootedness < 35) lines.push('شيء ما أبعد العائلة عن أرضها الأصلية.');
 
-  if (ledger.trauma >= 60) lines.push('الكثير مما عاشته العائلة لم يُشفَ منه بعد.');
-  else if (ledger.trauma < 20) lines.push('أبعد الله عن العائلة أقسى ما كان يمكن أن تمنحه هذه الحقبة.');
+  if (ledger.trauma >= 60) lines.push('الكثير مما عاشته العائلة ما اندمل بعد.');
+  else if (ledger.trauma < 20) lines.push('أبعد الله عن العائلة أقسى ما كانت هذي الحقبة تستطيع تعطيه.');
 
   return lines.join(' ');
 }
@@ -165,9 +181,9 @@ function getInheritanceProseAr(ledger: FamilyLedger, familyName: string): string
   const parts: string[] = [];
 
   const totalWealth = (ledger.wealth.liquid + ledger.wealth.land + ledger.wealth.business) / 3;
-  if (totalWealth >= 60) parts.push(`تورث عائلة ${familyName} رخاءً حقيقيًا.`);
-  else if (totalWealth >= 35) parts.push(`تورث عائلة ${familyName} إمكانات متواضعة لكن صلبة.`);
-  else parts.push(`تورث عائلة ${familyName} قليلًا من الثروة المادية.`);
+  if (totalWealth >= 60) parts.push(`عائلة ${familyName} تورث رخاءً حقيقيًا.`);
+  else if (totalWealth >= 35) parts.push(`عائلة ${familyName} تورث إمكانات بسيطة لكن صلبة.`);
+  else parts.push(`عائلة ${familyName} تورث قليلًا من الثروة المادية.`);
 
   const rep = (ledger.reputation.tribal + ledger.reputation.social) / 2;
   if (rep >= 65) parts.push('اسم له ثقل في المجتمع.');
@@ -177,7 +193,7 @@ function getInheritanceProseAr(ledger: FamilyLedger, familyName: string): string
   if (ledger.rootedness >= 65) parts.push('جذور عميقة في الأرض والمجتمع.');
   else if (ledger.rootedness < 35) parts.push('عائلة انفصلت بعض الشيء عن أصولها.');
 
-  if (ledger.trauma >= 60) parts.push('وجرح لم يُشفَ يمضي إلى الأمام.');
+  if (ledger.trauma >= 60) parts.push('وجرح ما اندمل يمضي إلى الأمام.');
 
   return parts.join(' ');
 }
