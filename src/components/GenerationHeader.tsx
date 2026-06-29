@@ -14,7 +14,7 @@ export default function GenerationHeader({ era, generation, familyName, characte
 
   return (
     <div className="generation-header">
-      <div className="gen-label">{genLabel} · {characterName} {isAr ? 'آل' : ''} {familyName}</div>
+      <div className="gen-label">{genLabel} · {characterName} {familyName}</div>
       <div className="gen-era">{era}</div>
     </div>
   );

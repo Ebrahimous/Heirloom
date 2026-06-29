@@ -26,7 +26,7 @@ export default function FamilyTree({ generation, familyName, characterNames }: F
 
   return (
     <div className="family-tree">
-      <div className="tree-title">{isAr ? 'آل' : ''} {familyName} {isAr ? '' : 'Family'}</div>
+      <div className="tree-title">{isAr ? '' : ''}{familyName}{isAr ? '' : ' Family'}</div>
       <div className="tree-nodes">
         {names.map((name, i) => {
           const isPast = i < generation - 1;
