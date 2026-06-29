@@ -251,52 +251,100 @@ body {
 /* ─── Home page ─────────────────────────────────────────── */
 .home-page {
   justify-content: space-between;
+  padding-top: 0;
+  gap: 0;
 }
 
 .home-hero {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-top: 60px;
-  text-align: center;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 20px 24px;
+  gap: 0;
 }
 
-.home-logo {
-  font-size: 24px;
+.home-year-range {
+  font-size: 11px;
+  letter-spacing: 0.2em;
   color: var(--gold-dim);
-  letter-spacing: 0.15em;
-  font-family: 'Georgia', serif;
+  margin-bottom: 20px;
+}
+
+.home-ornament {
+  width: 48px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  margin-bottom: 22px;
 }
 
 .home-title {
-  font-size: 42px;
+  font-size: 48px;
   font-weight: 400;
   color: var(--text);
   letter-spacing: -0.01em;
-  line-height: 1.1;
+  line-height: 1;
+  margin-bottom: 18px;
+}
+
+.home-diamond {
+  width: 7px;
+  height: 7px;
+  background: var(--gold-dim);
+  transform: rotate(45deg);
+  margin-bottom: 18px;
 }
 
 .home-tagline {
-  font-size: 17px;
+  font-size: 15px;
   color: var(--text-dim);
-  line-height: 1.6;
-  max-width: 320px;
-  margin-top: 4px;
-  text-align: center;
+  line-height: 1.7;
+  max-width: 260px;
+  font-style: italic;
+}
+
+.home-gen-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.home-gen-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--text-faint);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.home-gen-dot.filled {
+  background: var(--gold-dim);
+  border-color: var(--gold-dim);
+}
+
+.home-rule {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 16px;
 }
 
 .home-actions {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding-bottom: 8px;
 }
 
 .home-footer {
   text-align: center;
   color: var(--text-faint);
-  font-size: 13px;
-  letter-spacing: 0.05em;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  padding-bottom: 8px;
 }
 
 /* ─── Generation header ─────────────────────────────────── */
@@ -795,57 +843,4 @@ body {
   line-height: 1.7;
 }
 
-/* ─── Premium gate ───────────────────────────────────────── */
-.premium-gate {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  padding: 40px 20px;
-  text-align: center;
-  min-height: 60dvh;
-}
-
-.gate-icon {
-  font-size: 40px;
-  color: var(--gold-dim);
-}
-
-.gate-title {
-  font-size: 28px;
-  font-weight: 400;
-  color: var(--text);
-}
-
-.gate-text {
-  font-size: 17px;
-  color: var(--text-dim);
-  line-height: 1.7;
-  max-width: 320px;
-}
-
-.btn-premium {
-  background: var(--gold);
-  color: #0e0c09;
-  border: none;
-  border-radius: var(--radius);
-  padding: 16px 32px;
-  font-size: 17px;
-  font-family: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-  max-width: 320px;
-  min-height: 56px;
-}
-
-.btn-premium:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.gate-note {
-  font-size: 13px;
-  color: var(--text-faint);
-}
+/* ─── Premium gate ─────────────────────────────────�
