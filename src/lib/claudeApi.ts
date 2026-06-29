@@ -24,6 +24,23 @@ async function callClaude(
   return result.data.text;
 }
 
+// Hardcoded names in decision data that should be swapped for player-chosen names
+const HARDCODED_NAME_MAP: [string, string][] = [
+  ['Hassan', 'gen1'],
+  ['حسن', 'gen1'],
+  ['Yousef', 'gen2'],
+  ['يوسف', 'gen2'],
+];
+
+function replaceHardcodedNames(text: string, names: { gen1: string; gen2: string }): string {
+  let result = text;
+  for (const [hardcoded, key] of HARDCODED_NAME_MAP) {
+    const replacement = names[key as keyof typeof names];
+    if (replacement) result = result.split(hardcoded).join(replacement);
+  }
+  return result;
+}
+
 export interface NarrationRequest {
   situation: string;
   choiceText: string;
@@ -31,10 +48,14 @@ export interface NarrationRequest {
   narrativeFlags: string[];
   familyName: string;
   characterName: string;
+  characterNames: { gen1: string; gen2: string };
   decisionHistory: { situation: string; choice: string }[];
 }
 
 export async function generateNarration(req: NarrationRequest): Promise<string> {
+  const situation = replaceHardcodedNames(req.situation, req.characterNames);
+  const choiceText = replaceHardcodedNames(req.choiceText, req.characterNames);
+
   const flagsText = req.narrativeFlags.length > 0
     ? `أحداث سابقة: ${req.narrativeFlags.join('، ')}.`
     : '';
@@ -45,11 +66,11 @@ export async function generateNarration(req: NarrationRequest): Promise<string> 
 
   const userMessage =
 `اسم العائلة: ${req.familyName}
-اسم الشخصية: ${req.characterName}
+اسم الشخصية الرئيسية: ${req.characterName} — استخدم هذا الاسم فقط. الشخصيات الأخرى تُذكر بصلتهم (الأخ، العمّ، الجار...) بلا أسماء.
 
-الموقف: ${req.situation}
+الموقف: ${situation}
 
-القرار المتّخذ: ${req.choiceText}
+القرار المتّخذ: ${choiceText}
 
 وضع الأسرة الحالي: ${req.ledgerSummary}
 

@@ -84,6 +84,7 @@ export default function Decision() {
         narrativeFlags: newFlags,
         familyName: game.familyName,
         characterName,
+        characterNames: { gen1: game.characterNames.gen1, gen2: game.characterNames.gen2 },
         decisionHistory: historyForAI,
       });
       setNarration(text);
