@@ -71,6 +71,7 @@ export default function Legacy() {
 
   return (
     <div className="page legacy-page">
+      <button className="back-btn" onClick={() => navigate("/")}>{t("back")}</button>
       <div className="legacy-header">
         <div className="legacy-label">{t('legacyLabel')}</div>
         <h2 className="legacy-family">{game.familyName}</h2>
@@ -82,4 +83,9 @@ export default function Legacy() {
       <div className="legacy-text"><p>{legacy}</p></div>
       <div className="legacy-verdict"><p>{summariseLedger(game.ledger, game.familyName)}</p></div>
 
-      <button className="btn-
+      <button className="btn-primary" onClick={() => navigate('/')}>
+        {t('playAgain')}
+      </button>
+    </div>
+  );
+}

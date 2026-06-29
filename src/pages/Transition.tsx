@@ -90,5 +90,8 @@ export default function Transition() {
       )}
 
       <button className="btn-primary" onClick={handleAdvance} disabled={advancing}>
-        {advancing
-          ? (isAr ? '...جارٍ البدء' : 'Beg
+        {advancing ? `${t('beginning')}` : `${t('beginChapter')} ${nextName}`}
+      </button>
+    </div>
+  );
+}

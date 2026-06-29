@@ -170,4 +170,11 @@ export default function Decision() {
         </div>
       )}
 
-      {canContinue && !narrationLoading 
+      {canContinue && !narrationLoading && (
+        <button className="btn-primary continue-btn" onClick={handleContinue}>
+          {isAr ? 'متابعة' : 'Continue'}
+        </button>
+      )}
+    </div>
+  );
+}
