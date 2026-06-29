@@ -61,7 +61,7 @@ export async function generateNarration(req: NarrationRequest): Promise<string> 
     : '';
 
   const historyText = req.decisionHistory.length > 0
-    ? `قرارات سابقة:\n${req.decisionHistory.map((h) => `- ${h.situation} ← ${h.choice}`).join('\n')}`
+    ? `قرارات سابقة:\n${req.decisionHistory.map((h) => `- ${replaceHardcodedNames(h.situation, req.characterNames)} ← ${replaceHardcodedNames(h.choice, req.characterNames)}`).join('\n')}`
     : '';
 
   const userMessage =

@@ -51,7 +51,12 @@ export default function Decision() {
     if (!game || !decision || selectedOption) return;
 
     setSelectedOption(option);
-    const fallback = isAr ? (option.shortNarrationAr ?? option.shortNarration) : option.shortNarration;
+    const rawFallback = isAr ? (option.shortNarrationAr ?? option.shortNarration) : option.shortNarration;
+    const n1 = game.characterNames.gen1;
+    const n2 = game.characterNames.gen2;
+    const fallback = rawFallback
+      .split('حسن').join(n1).split('Hassan').join(n1)
+      .split('يوسف').join(n2).split('Yousef').join(n2);
     setNarration(fallback);
     setNarrationLoading(true);
 
@@ -126,7 +131,17 @@ export default function Decision() {
   }
 
   const era = isAr ? (decision.eraAr ?? decision.era) : decision.era;
-  const situation = isAr ? (decision.situationAr ?? decision.situation) : decision.situation;
+  const rawSituation = isAr ? (decision.situationAr ?? decision.situation) : decision.situation;
+
+  function replaceName(text: string): string {
+    const n1 = game!.characterNames.gen1;
+    const n2 = game!.characterNames.gen2;
+    return text
+      .split('حسن').join(n1).split('Hassan').join(n1)
+      .split('يوسف').join(n2).split('Yousef').join(n2);
+  }
+
+  const situation = replaceName(rawSituation);
 
   return (
     <div className="page decision-page">
