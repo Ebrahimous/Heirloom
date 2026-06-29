@@ -39,7 +39,7 @@ export const BONUS_EVENTS: BonusEvent[] = [
   {
     id: 'bonus_medical_cost',
     generation: 2,
-    text: "A serious illness in the household. The treatment cost more than expected, and the months of recovery quietly reshaped the family's rhythm.",
+    text: 'A serious illness in the household. The treatment cost more than expected, and the months of recovery quietly reshaped the family\'s rhythm.',
     textAr: 'مرض خطير في البيت. التكاليف الطبية كانت أكثر مما توقّعوا، وأشهر التعافي غيّرت إيقاع العائلة بهدوء.',
     ledgerEffect: { 'wealth.liquid': -18, trauma: 12 },
   },
@@ -80,6 +80,7 @@ export const BONUS_EVENTS: BonusEvent[] = [
   },
 ];
 
+// Pick a random bonus event for a given generation that hasn't been fired yet
 export function pickBonusEvent(
   generation: number,
   firedIds: string[]

@@ -50,8 +50,8 @@ export default function Chapter() {
     return null;
   }
 
-  // Pick a situation variant deterministically — same variant for the same game+decision,
-  // different across playthroughs (gameId changes each new game).
+  // Pick a situation variant deterministically — same variant for the same game+decision
+  // but different across runs (gameId changes each new game).
   function pickVariant(base: string, variants?: string[], seed?: string): string {
     if (!variants || variants.length === 0) return base;
     const all = [base, ...variants];

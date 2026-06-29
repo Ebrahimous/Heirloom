@@ -395,6 +395,32 @@ body {
   margin-top: 4px;
 }
 
+/* ─── Bonus event card ───────────────────────────────────── */
+.bonus-event-card {
+  margin-top: 24px;
+  padding: 16px 20px;
+  background: var(--bg-3);
+  border: 1px solid var(--gold-dim);
+  border-inline-start: 3px solid var(--gold-dim);
+  border-radius: var(--radius-sm);
+  animation: fade-in 0.5s ease;
+}
+
+.bonus-event-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold-dim);
+  margin-bottom: 8px;
+}
+
+.bonus-event-text {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
 .narration-block {
   padding: 20px;
   background: var(--bg-2);
@@ -822,30 +848,4 @@ body {
 .gate-note {
   font-size: 13px;
   color: var(--text-faint);
-}
-
-/* ─── Bonus event card ───────────────────────────────────── */
-.bonus-event-card {
-  margin-top: 24px;
-  padding: 16px 20px;
-  background: var(--bg-3);
-  border: 1px solid var(--gold-dim);
-  border-inline-start: 3px solid var(--gold-dim);
-  border-radius: var(--radius-sm);
-  animation: fade-in 0.5s ease;
-}
-
-.bonus-event-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--gold-dim);
-  margin-bottom: 8px;
-}
-
-.bonus-event-text {
-  font-size: 0.95rem;
-  line-height: 1.65;
-  color: var(--text-dim);
-  font-style: italic;
 }

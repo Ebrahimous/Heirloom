@@ -63,7 +63,7 @@ export const GEN1_DECISIONS: DecisionPoint[] = [
     situationAr:
       'ولد حسن الأكبر يوسف — ذكاؤه لافت، كلّ من يجالسه يلاحظ ذلك. ظهرت منحة دراسية للقاهرة. أربع سنوات بعيدًا. ستفتقده الأسرة. لكن الدنيا تتغيّر.',
     situationVariants: [
-      "Yousef's teacher came to the house. He sat with Hassan for an hour and said: this boy should not stay here. There is a scholarship to Cairo — fully funded, four years. It would cost the family nothing but his presence.",
+      "Yousef's teacher came to the house. He sat with Hassan for an hour and said: this boy should not stay here. There is a scholarship to Cairo — full funded, four years. It would cost the family nothing but his presence.",
       "A neighbour's son returned from Cairo last month, changed in ways people noticed. Now the same scholarship is being offered to Yousef. Four years is a long time. But Hassan can see what that trip did for the neighbour's family.",
     ],
     situationVariantsAr: [

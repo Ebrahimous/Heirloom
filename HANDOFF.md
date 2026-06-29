@@ -22,20 +22,15 @@ A mobile-first narrative strategy game set in Kuwait, 1958–present. The player
 - Arabic ledger prose (`getLedgerProse`, `getInheritanceProse`) — no English text shown to Arabic users
 - Player-input character names (grandfather + son) collected at game start
 - All 3 starting archetypes (Merchant, Pearl Diver, Government Clerk)
-- Gen 1: 5 fully authored decision points with soft Arabic + 2 situation variants each (1958–1974)
-- Gen 2: 4 fully authored decision points with soft Arabic + 2 situation variants each (1978–1991)
+- Gen 1: 5 fully authored decision points with Arabic translations (1958–1974)
+- Gen 2: 4 fully authored decision points with Arabic translations (1978–1991)
 - Gen 3 & 4: placeholder structure (premium gated in UI)
-- Ledger engine: `applyEffect`, `applyVariance`, `summariseLedger`, `getLedgerProse`, `getInheritanceProse`
+- Ledger engine: `applyEffect`, `summariseLedger`, `getLedgerProse`, `getInheritanceProse`
 - Decision gating: filters options by ledger requirements, always shows minimum 2
 - All 7 pages: Home, NewGame, Chapter, Decision, Ledger, Transition, Legacy
 - All 5 components: DecisionCard, NarrationBlock, GenerationHeader, FamilyTree, PremiumGate
 - GitHub Actions CI/CD: push to `main` → auto build + deploy to Firebase
 
-### Recent additions (June 2026)
-- **Softer Arabic** — all `situationAr` and `shortNarrationAr` rewritten in warm, accessible MSA. AI narration prompt updated to match.
-- **Situation variants** — each decision has 3 possible setup framings (`situationVariants` / `situationVariantsAr`). Picked deterministically per game via hash of `gameId + decisionId`. Same run = same variant; new family = different framing.
-- **Ledger variance** — each `DecisionOption` has a `variance?: number` field (±%). `applyVariance()` in `ledgerEngine.ts` randomises numeric effects slightly each run. Values range 8–25%.
-- **Bonus events** — `src/data/bonusEvents.ts` holds 11 events (gen 1 and gen 2). After each decision, 40% chance one fires. Shown as a "Meanwhile" card in `Decision.tsx`, ledger effect applied and saved. Won't repeat within a session (tracked in local state).
 
 ### What's not done yet
 - Gen 3 and Gen 4 decisions need full authoring (placeholder stubs exist)
@@ -66,16 +61,17 @@ cd heirloom_push
 git config user.name "$NAME"
 git config user.email "$EMAIL"
 
-# Write changed files directly into the clone (G: drive not accessible from bash sandbox)
-# Then:
+rsync -av \
+  --exclude='node_modules' --exclude='dist' --exclude='secret.txt' \
+  --exclude='.env' --exclude='functions/lib/' --exclude='.firebase/' --exclude='.git' \
+  /path/to/Heirloom/ .
+
 git add -A
 git commit -m "your message"
 git push origin main
 ```
 
-**PAT file:** `G:\Other computers\My computer\Projects\Heirloom\secret.txt` — gitignored, never pushed.
-
-**Note on workflow:** The bash sandbox cannot access the G: drive (Google Drive mount). Files must be written directly into the clone using bash heredocs. The G: drive folder is the source of truth for editing via file tools (Read/Write/Edit), but pushes always go through a fresh clone.
+**PAT file:** `C:\Users\EB\Claude\Projects\Heirloom\secret.txt` — gitignored, never pushed.
 
 ---
 
@@ -101,22 +97,21 @@ functions/                     Firebase Cloud Functions (Node 20, TypeScript)
 
 src/
   constants/
-    ledgerTypes.ts             TypeScript interfaces — FamilyLedger, GameState, DecisionPoint, BonusEvent, CharacterNames
+    ledgerTypes.ts             TypeScript interfaces — FamilyLedger, GameState, DecisionPoint, CharacterNames
     archetypes.ts              3 starting archetypes with ledger values
-    narrationPrompt.ts         System prompts for narration, transition, legacy (with soft Arabic instruction)
+    narrationPrompt.ts         System prompts for narration, transition, legacy
   data/
-    gen1Decisions.ts           5 decisions: 1958–1974 (soft Arabic + 2 variants each + variance)
-    gen2Decisions.ts           4 decisions: 1978–1991 (soft Arabic + 2 variants each + variance)
+    gen1Decisions.ts           5 decisions: 1958–1974 (Arabic + English)
+    gen2Decisions.ts           4 decisions: 1978–1991 (Arabic + English)
     gen3Decisions.ts           Placeholder (premium)
     gen4Decisions.ts           Placeholder (premium)
-    bonusEvents.ts             11 random bonus events for gen 1 & 2; pickBonusEvent() helper
     historicalEvents.ts        Gulf historical context by year
   i18n/
     strings.ts                 All UI strings in Arabic and English
   contexts/
     LanguageContext.tsx        Lang toggle (ar/en), default Arabic, persists to localStorage, sets dir/lang
   lib/
-    ledgerEngine.ts            applyEffect, applyVariance, summariseLedger (EN, for AI), getLedgerProse, getInheritanceProse (bilingual)
+    ledgerEngine.ts            applyEffect, summariseLedger (EN, for AI), getLedgerProse, getInheritanceProse (bilingual)
     decisionGating.ts          filterOptions — enforces ledger requirements, min 2 always shown
     claudeApi.ts               Calls Firebase Function (not Anthropic directly), passes language param
     firebase.ts                Firebase app init with fallback config values
@@ -124,8 +119,8 @@ src/
   pages/
     Home.tsx                   Auth check (Google or guest), continue or start new
     NewGame.tsx                Family name + character names + archetype picker → Firestore create
-    Chapter.tsx                Era + situation display (picks variant deterministically) → routes to Decision
-    Decision.tsx               Options, AI narration (bilingual), variance, bonus events, ledger update, Firestore save
+    Chapter.tsx                Era + situation display → routes to Decision
+    Decision.tsx               Options, AI narration (bilingual), ledger update, Firestore save
     Ledger.tsx                 Between-generation prose summary (bilingual) + family tree
     Transition.tsx             Death narration + inheritance prose (bilingual) + next gen intro
     Legacy.tsx                 Premium-gated end-of-run summary
@@ -136,7 +131,7 @@ src/
     FamilyTree.tsx             Shows all 4 generations, active/past/future states
     PremiumGate.tsx            Locked UI for Gen 3/4 and Legacy
   styles/
-    global.css                 All styles — CSS variables, dark warm aesthetic, RTL overrides, bonus event card
+    global.css                 All styles — CSS variables, dark warm aesthetic, RTL overrides
   App.tsx                      Router + LanguageToggle (fixed, inset-inline-end)
   main.tsx                     Entry point
 ```
@@ -151,13 +146,7 @@ src/
 
 **Ledger numbers never shown.** `summariseLedger()` (always English) is passed to the AI as context. `getLedgerProse()` and `getInheritanceProse()` (bilingual) are shown in the UI.
 
-**Language in AI calls.** The `callClaude` function appends an Arabic instruction suffix to the system prompt when `language === 'ar'`, forcing literary soft MSA output from the model.
-
-**Situation variants.** `pickVariant()` in `Chapter.tsx` hashes `gameId + decisionId` to an index. Deterministic within a run, different across runs. No persistence needed.
-
-**Ledger variance.** `applyVariance()` in `ledgerEngine.ts` applies a random ±factor to numeric effects before `applyEffect()`. Called in `Decision.tsx` if `option.variance` is set.
-
-**Bonus events.** Fired in `Decision.tsx` after narration loads (40% chance). Effect applied to ledger and saved immediately. Tracked in local React state (`firedEvents`) to prevent repeats within a session.
+**Language in AI calls.** The `callClaude` function appends an Arabic instruction suffix to the system prompt when `language === 'ar'`, forcing literary MSA output from the model.
 
 **Decision gating minimum.** `filterOptions()` always returns at least 2 options. The next-best unavailable option is added back if gating reduces below 2.
 

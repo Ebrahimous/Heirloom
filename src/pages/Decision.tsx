@@ -4,10 +4,11 @@ import { loadGame, recordDecision, saveGame } from '../lib/gameState';
 import { applyEffect, applyVariance, summariseLedger } from '../lib/ledgerEngine';
 import { filterOptions } from '../lib/decisionGating';
 import { generateNarration } from '../lib/claudeApi';
-import { pickBonusEvent } from '../data/bonusEvents';
-import type { BonusEvent, GameState, DecisionPoint, DecisionOption } from '../constants/ledgerTypes';
+import type { GameState, DecisionPoint, DecisionOption } from '../constants/ledgerTypes';
 import { GEN1_DECISIONS } from '../data/gen1Decisions';
 import { GEN2_DECISIONS } from '../data/gen2Decisions';
+import { pickBonusEvent } from '../data/bonusEvents';
+import type { BonusEvent } from '../constants/ledgerTypes';
 import GenerationHeader from '../components/GenerationHeader';
 import DecisionCard from '../components/DecisionCard';
 import NarrationBlock from '../components/NarrationBlock';
@@ -75,9 +76,6 @@ export default function Decision() {
       ? game.characterNames.gen1
       : game.characterNames.gen2;
 
-    let finalLedger = newLedger;
-    let finalGame = updatedGame;
-
     try {
       const text = await generateNarration({
         situation: isAr ? (decision.situationAr ?? decision.situation) : decision.situation,
@@ -101,10 +99,10 @@ export default function Decision() {
         if (event) {
           setBonusEvent(event);
           setFiredEvents((prev) => [...prev, event.id]);
-          finalLedger = applyEffect(newLedger, event.ledgerEffect);
-          finalGame = { ...updatedGame, ledger: finalLedger };
-          await saveGame(finalGame).catch(console.error);
-          setGame(finalGame);
+          const eventLedger = applyEffect(newLedger, event.ledgerEffect);
+          const eventGame: GameState = { ...updatedGame, ledger: eventLedger };
+          await saveGame(eventGame).catch(console.error);
+          setGame(eventGame);
         }
       }
 
@@ -112,9 +110,9 @@ export default function Decision() {
     }
 
     const record = { decisionId: decision.id, optionId: option.id, narration: fallback };
-    const saved = await recordDecision(finalGame, record).catch(() => finalGame);
-    setGame(saved);
-  }, [game, decision, selectedOption, isAr, lang, firedEvents]);
+    const finalGame = await recordDecision(updatedGame, record).catch(() => updatedGame);
+    setGame(finalGame);
+  }, [game, decision, selectedOption, isAr, lang]);
 
   function handleContinue() {
     if (!game || !decision) return;
