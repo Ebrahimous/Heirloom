@@ -248,7 +248,7 @@ body {
   align-self: flex-start;
 }
 
-/* ─── Home page ─────────────────────────────────────────── */
+/* ─── Home page ───────────────────────────────────────── */
 .home-page {
   justify-content: space-between;
   padding-top: 0;
@@ -843,4 +843,57 @@ body {
   line-height: 1.7;
 }
 
-/* ─── Premium gate ─────────────────────────────────�
+/* ─── Premium gate ───────────────────────────────────────── */
+.premium-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px 20px;
+  text-align: center;
+  min-height: 60dvh;
+}
+
+.gate-icon {
+  font-size: 40px;
+  color: var(--gold-dim);
+}
+
+.gate-title {
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.gate-text {
+  font-size: 17px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  max-width: 320px;
+}
+
+.btn-premium {
+  background: var(--gold);
+  color: #0e0c09;
+  border: none;
+  border-radius: var(--radius);
+  padding: 16px 32px;
+  font-size: 17px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  max-width: 320px;
+  min-height: 56px;
+}
+
+.btn-premium:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gate-note {
+  font-size: 13px;
+  color: var(--text-faint);
+}
