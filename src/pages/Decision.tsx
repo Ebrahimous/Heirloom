@@ -19,7 +19,7 @@ const GEN_DECISIONS: DecisionPoint[][] = [GEN1_DECISIONS, GEN2_DECISIONS];
 export default function Decision() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAr, lang } = useLanguage();
+  const { isAr, lang, t } = useLanguage();
   const { gameId, decisionId } = (location.state ?? {}) as { gameId?: string; decisionId?: string };
 
   const [game, setGame] = useState<GameState | null>(null);

@@ -8,7 +8,7 @@ interface GenerationHeaderProps {
 }
 
 export default function GenerationHeader({ era, generation, familyName, characterName }: GenerationHeaderProps) {
-  const { t, isAr } = useLanguage();
+  const { t } = useLanguage();
   const genLabels = [t('gen1Label'), t('gen2Label'), t('gen3Label'), t('gen4Label')];
   const genLabel = genLabels[generation - 1] ?? `Gen ${generation}`;
 
