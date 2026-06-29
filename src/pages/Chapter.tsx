@@ -101,7 +101,7 @@ export default function Chapter() {
         className="btn-primary"
         onClick={() => navigate('/decision', { state: { gameId, decisionId: currentDecision.id } })}
       >
-        {t('continue')}
+        {t('continueBtn')}
       </button>
     </div>
   );
