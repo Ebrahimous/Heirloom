@@ -10,6 +10,12 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 const GEN_DECISIONS = [GEN1_DECISIONS, GEN2_DECISIONS];
 
+function replaceName(text: string, gen1: string, gen2: string): string {
+  return text
+    .split('حسن').join(gen1).split('Hassan').join(gen1)
+    .split('يوسف').join(gen2).split('Yousef').join(gen2);
+}
+
 export default function Chapter() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,8 +56,6 @@ export default function Chapter() {
     return null;
   }
 
-  // Pick a situation variant deterministically — same variant for the same game+decision
-  // but different across runs (gameId changes each new game).
   function pickVariant(base: string, variants?: string[], seed?: string): string {
     if (!variants || variants.length === 0) return base;
     const all = [base, ...variants];
@@ -59,14 +63,19 @@ export default function Chapter() {
     return all[hash % all.length];
   }
 
+  const n1 = game.characterNames.gen1;
+  const n2 = game.characterNames.gen2;
   const variantSeed = (gameId ?? '') + currentDecision.id;
   const era = isAr ? (currentDecision.eraAr ?? currentDecision.era) : currentDecision.era;
-  const situation = isAr
+  const rawSituation = isAr
     ? pickVariant(currentDecision.situationAr ?? currentDecision.situation, currentDecision.situationVariantsAr, variantSeed)
     : pickVariant(currentDecision.situation, currentDecision.situationVariants, variantSeed);
-  const historicalContext = isAr
+  const rawContext = isAr
     ? (currentDecision.historicalContextAr ?? currentDecision.historicalContext)
     : currentDecision.historicalContext;
+
+  const situation = replaceName(rawSituation, n1, n2);
+  const historicalContext = rawContext ? replaceName(rawContext, n1, n2) : undefined;
 
   return (
     <div className="page chapter-page">
@@ -92,7 +101,7 @@ export default function Chapter() {
         className="btn-primary"
         onClick={() => navigate('/decision', { state: { gameId, decisionId: currentDecision.id } })}
       >
-        {t('continueBtn')}
+        {t('continue')}
       </button>
     </div>
   );
